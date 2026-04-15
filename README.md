@@ -109,7 +109,7 @@ El sistema cuenta con 5 tablas principales:
 ![Diagrama Entidad Relacion](Recursos/entidad_relacional.png)
 
 ### Modelo Relacional (MR)
-![Modelo Relacional](Recursos/modelo_relacional.png)
+![Modelo Relacional](Recursos/modelo_relacional .png)
 
 ### Cardinalidades
 CLIENTE — VENTA (1:N) <br>
