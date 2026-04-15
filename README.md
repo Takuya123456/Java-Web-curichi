@@ -1,6 +1,5 @@
 ## TRELLO
-Próximamente disponible
-(Recursos/Trello.png)
+![Trello](Recursos/Trello.png)
 
 ---
 
