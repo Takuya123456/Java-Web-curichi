@@ -1,6 +1,6 @@
 ## TRELLO
 Próximamente disponible
-<!-- ![TRELLO](https://trello.com) -->
+(Recursos/Trello.png)
 
 ---
 
