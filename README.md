@@ -11,11 +11,11 @@ Sistema web para la gestión de ventas, stock, clientes y fiados de una empresa 
 Nombre: Curichazo <br>
 Giro: Venta de curichis (helados artesanales) <br>
 Tamaño: Pequeña empresa, operación familiar <br>
-Contexto: Negocio muy común en Pucallpa donde se venden curichis en la calle o en un puesto fijo. El vendedor entrega curichis a clientes de confianza sin cobrar al instante (fiados), lo que genera confusión entre lo cobrado y lo pendiente. <br>
-Justificación: Se necesita un sistema digital para reemplazar el cuaderno manual del vendedor, evitar errores, y tener un control claro de cada venta, el stock disponible y los fiados pendientes de cobro.
+Contexto: Negocio muy común en Pucallpa donde se venden curichis en la calle o en un puesto fijo. La vendedora entrega curichis a clientes de confianza sin cobrar al instante (fiados), lo que genera confusión entre lo cobrado y lo fiado. <br>
+Justificación: Se necesita un sistema digital para reemplazar el cuaderno manual de la vendedora, evitar errores, y tener un control claro de cada venta, el stock disponible y los fiados pendientes de cobro.
 
 ## Identificar el problema y solución
-Problema: El vendedor lleva el registro de ventas y fiados en un cuaderno o de memoria, lo que genera errores, mezcla de pagos al contado con deudas, pérdida de información y dificultad para saber cuánto debe cada cliente. <br>
+Problema: La vendedora lleva el registro de ventas y fiados en un cuaderno o de memoria, lo que genera errores, mezcla de pagos al contado con deudas, pérdida de información y dificultad para saber cuánto debe cada cliente. <br>
 Solución tecnológica: Desarrollar un sistema web con Java Spring Boot y MySQL que permita registrar clientes, ventas, stock y fiados, mostrando en todo momento el estado de cada deuda y el historial de pagos realizados.
 
 ---
@@ -109,7 +109,7 @@ El sistema cuenta con 5 tablas principales:
 ![Diagrama Entidad Relacion](Recursos/entidad_relacional.png)
 
 ### Modelo Relacional (MR)
-![Modelo Relacional](https://github.com/Takuya123456/Java-Web-curichi/Modelo_Relacional.png)
+![Modelo Relacional](Recursos/modelo_relacional.png)
 
 ### Cardinalidades
 CLIENTE — VENTA (1:N) <br>
@@ -130,84 +130,93 @@ Cuando un fiado se marca como pagado, se mueve al historial con fecha de pago re
 ### Base de datos
 
 ```sql
-CREATE DATABASE IF NOT EXISTS curichazo_db
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_spanish_ci;
+-- base de datos para el sistema de curichis
+create database  curichazo_db;
 
-USE curichazo_db;
+use curichazo_db;
 
-CREATE TABLE IF NOT EXISTS clientes (
-    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nombre    VARCHAR(100) NOT NULL,
-    apellido  VARCHAR(100) NOT NULL,
-    telefono  VARCHAR(20)
+-- tabla de clientes
+create table cliente (
+    id_cliente int auto_increment primary key,
+    nombre varchar(100) not null,
+    apellido varchar(100) not null,
+    telefono varchar(15)
 );
 
-CREATE TABLE IF NOT EXISTS stock (
-    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
-    producto  VARCHAR(100) NOT NULL,
-    cantidad  INT          NOT NULL,
-    precio    DOUBLE       NOT NULL,
-    estado    VARCHAR(50)  NOT NULL DEFAULT 'Disponible'
+-- tabla de ventas
+create table venta (
+    id_venta int auto_increment primary key,
+    cantidad int not null,
+    producto varchar(100) not null,
+    nombre_completo varchar(200) not null,
+    precio decimal(10,2) not null,
+    id_cliente int not null,
+    foreign key (id_cliente) references cliente(id_cliente)
 );
 
-CREATE TABLE IF NOT EXISTS ventas (
-    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nombre    VARCHAR(100) NOT NULL,
-    apellido  VARCHAR(100) NOT NULL,
-    producto  VARCHAR(100) NOT NULL,
-    cantidad  INT          NOT NULL,
-    precio    DOUBLE       NOT NULL,
-    total     DOUBLE       NOT NULL,
-    fecha     VARCHAR(20)  NOT NULL
+-- stock de productos
+create table stock (
+    id_producto int auto_increment primary key,
+    cantidad int not null,
+    producto varchar(100) not null,
+    estado enum('Disponible', 'Bajo stock', 'Agotado') default 'Disponible',
+    precio decimal(10,2) not null,
+    id_venta int,
+    foreign key (id_venta) references venta(id_venta)
 );
 
-CREATE TABLE IF NOT EXISTS fiados (
-    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
-    cliente   VARCHAR(200) NOT NULL,
-    deuda     DOUBLE       NOT NULL,
-    fecha     VARCHAR(20)  NOT NULL,
-    estado    VARCHAR(20)  NOT NULL DEFAULT 'Pendiente'
+-- fiados pendientes
+create table fiado (
+    id_fiado int auto_increment primary key,
+    id_cliente int not null,
+    fecha date not null,
+    estado enum('Pendiente', 'Pagado') default 'Pendiente',
+    foreign key (id_cliente) references cliente(id_cliente)
 );
 
-CREATE TABLE IF NOT EXISTS historial_fiados (
-    id           BIGINT AUTO_INCREMENT PRIMARY KEY,
-    cliente      VARCHAR(200) NOT NULL,
-    deuda        DOUBLE       NOT NULL,
-    fecha_fiado  VARCHAR(20)  NOT NULL,
-    fecha_pago   VARCHAR(20)  NOT NULL
+-- historial de fiados pagados
+create table historial (
+    id_historial int auto_increment primary key,
+    id_fiado int not null,
+    fecha date not null,
+    precio decimal(10,2) not null,
+    foreign key (id_fiado) references fiado(id_fiado)
 );
 
--- Datos de prueba
-INSERT INTO clientes (nombre, apellido, telefono) VALUES
-('Ana',    'Torres',  '987654321'),
-('Carlos', 'Quispe',  '912345678'),
-('Lucía',  'Mamani',  '923456789'),
-('Pedro',  'Huanca',  '934567890'),
-('Rosa',   'Flores',  '945678901'),
-('Miguel', 'Soto',    '956789012');
+-- datos de prueba
+insert into cliente (nombre, apellido, telefono) values
+('Ana', 'Torres', '987654321'),
+('Carlos', 'Quispe', '912345678'),
+('Lucía', 'Mamani', '923456789'),
+('Pedro', 'Huanca', '934567890'),
+('Rosa', 'Flores', '945678901'),
+('Miguel', 'Soto', '956789012');
 
-INSERT INTO stock (producto, cantidad, precio, estado) VALUES
-('Mango',          80, 0.50, 'Disponible'),
-('Coco con leche', 60, 0.60, 'Disponible'),
-('Fresa',          45, 0.50, 'Disponible'),
-('Aguaje',         30, 0.80, 'Disponible'),
-('Gelatina',       10, 0.40, 'Bajo stock');
+insert into venta (cantidad, producto, nombre_completo, precio, id_cliente) values
+(20, 'Mango', 'Ana Torres', 10.00, 1),
+(15, 'Fresa', 'Carlos Quispe', 7.50, 2),
+(18, 'Coco con leche', 'Lucía Mamani', 10.80, 3),
+(12, 'Aguaje', 'Pedro Huanca', 9.60, 4),
+(8, 'Gelatina', 'Rosa Flores', 3.20, 5);
 
-INSERT INTO ventas (nombre, apellido, producto, cantidad, precio, total, fecha) VALUES
-('Ana',    'Torres',  'Mango',          20, 0.50, 10.00, '11/04/2026'),
-('Carlos', 'Quispe',  'Fresa',          15, 0.50,  7.50, '11/04/2026'),
-('Lucía',  'Mamani',  'Coco con leche', 18, 0.60, 10.80, '11/04/2026'),
-('Pedro',  'Huanca',  'Aguaje',         12, 0.80,  9.60, '11/04/2026'),
-('Rosa',   'Flores',  'Gelatina',        8, 0.40,  3.20, '11/04/2026');
+insert into stock (cantidad, producto, estado, precio, id_venta) values
+(80, 'Mango', 'Disponible', 0.50, 1),
+(60, 'Coco con leche', 'Disponible', 0.60, 3),
+(45, 'Fresa', 'Disponible', 0.50, 2),
+(30, 'Aguaje', 'Disponible', 0.80, 4),
+(10, 'Gelatina', 'Bajo stock', 0.40, 5);
 
-INSERT INTO fiados (cliente, deuda, fecha, estado) VALUES
-('Ana Torres',    5.00, '10/04/2026', 'Pendiente'),
-('Carlos Quispe', 3.50, '09/04/2026', 'Pendiente'),
-('Lucía Mamani',  6.00, '08/04/2026', 'Pendiente'),
-('Pedro Huanca',  4.50, '07/04/2026', 'Pendiente'),
-('Rosa Flores',   3.00, '07/04/2026', 'Pendiente'),
-('Miguel Soto',   3.00, '06/04/2026', 'Pendiente');
+insert into fiado (id_cliente, fecha, estado) values
+(1, '2026-04-10', 'Pendiente'),
+(2, '2026-04-09', 'Pendiente'),
+(3, '2026-04-08', 'Pendiente'),
+(4, '2026-04-07', 'Pendiente'),
+(5, '2026-04-07', 'Pendiente'),
+(6, '2026-04-06', 'Pendiente');
+
+insert into historial (id_fiado, fecha, precio) values
+(1, '2026-04-12', 5.00),
+(2, '2026-04-11', 3.50);
 ```
 
 ---
@@ -217,7 +226,7 @@ INSERT INTO fiados (cliente, deuda, fecha, estado) VALUES
 ### Requisitos previos
 - Tener instalado IntelliJ IDEA
 - Tener instalado MySQL + MySQL Workbench
-- Tener instalado JDK 25 o superior
+- Tener instalado JDK 25 o superior pero recomendable usar una version anterior para evitar errores
 - Tener instalado VS Code (para el frontend)
 
 ### Backend
