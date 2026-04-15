@@ -106,10 +106,10 @@ El sistema cuenta con 5 tablas principales:
 | historial_fiados | Registro de fiados que ya fueron pagados |
 
 ### Diagrama Entidad-Relación (DER)
-![Diagrama Entidad Relacion](https://github.com/Takuya123456/_Entidad_Relacional.png)
+![Diagrama Entidad Relacion](https://github.com/Takuya123456/Java-Web-curichi/Entidad_Relacional.png)
 
 ### Modelo Relacional (MR)
-![Modelo Relacional](https://github.com/Takuya123456/curichazo/blob/master/img/Modelo_Relacional.png)
+![Modelo Relacional](https://github.com/Takuya123456/Java-Web-curichi/Modelo_Relacional.png)
 
 ### Cardinalidades
 CLIENTE — VENTA (1:N) <br>
