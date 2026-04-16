@@ -52,8 +52,8 @@ Solución tecnológica: Desarrollar un sistema web con Java Spring Boot y MySQL 
 ## Tecnologías utilizadas
 - Java 25
 - Spring Boot 3.5.13
-- MySQL 8
-- HTML5, CSS3, JavaScript
+- MySQL 
+- HTML, CSS, JavaScript
 - Bootstrap 5.3.3
 - Font Awesome 6.5.0
 - IntelliJ IDEA
@@ -237,7 +237,7 @@ insert into historial (id_fiado, fecha, precio) values
 
 ### Frontend
 1. Abrir la carpeta `frontend/` en VS Code
-2. Abrir `index.html` con Live Server
+2. Abrir `index.html` cen un navegador que usemos
 3. El frontend se comunica con el backend via `fetch()`
 
 > El frontend y el backend corren por separado.
@@ -249,7 +249,7 @@ insert into historial (id_fiado, fecha, precio) values
 spring.application.name=gotagota
 
 # CONEXION A MYSQL
-spring.datasource.url=jdbc:mysql://localhost:3306/curichazo_db?useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true
+spring.datasource.url=jdbc:mysql://localhost:3306/curichazo_db
 spring.datasource.username=root
 spring.datasource.password=
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
