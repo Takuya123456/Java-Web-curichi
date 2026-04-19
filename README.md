@@ -88,7 +88,7 @@ curichazo/
 ---
 
 ### DIAGRAMA DE FIGMA UI/UX
-![FIGMA](https://github.com/Takuya123456/curichazo/blob/master/img/Figma.png)
+![FIGMA](https://www.figma.com/design/jOBAEbr9GyQ7ovEeJfnuG1/Sin-t%C3%ADtulo?t=ke30jSsruhnjJWEf-0)
 
 ---
 
