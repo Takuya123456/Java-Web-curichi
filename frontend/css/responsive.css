@@ -1,0 +1,65 @@
+/* ═══════════════════════════════════════
+   RESPONSIVE - CURICHAZO
+═══════════════════════════════════════ */
+
+/* ── DESKTOP (≥ 768px) ── */
+@media (min-width: 768px) {
+
+  /* Ocultar topbar en desktop */
+  .topbar { display: none; }
+
+  /* Sidebar siempre visible */
+  .sidebar {
+    left: 0;
+    top: 0;
+  }
+
+  /* Overlay no aplica en desktop */
+  .overlay { display: none !important; }
+
+  /* Main empuja a la derecha del sidebar */
+  main {
+    margin-top: 0;
+    margin-left: var(--sidebar-w);
+    padding: 36px 32px;
+  }
+
+  /* Ocultar botón cerrar del sidebar */
+  .btn-cerrar-sidebar { display: none !important; }
+
+  /* Ocultar botón volver en desktop */
+  #btn-volver { display: none !important; }
+}
+
+/* ── MÓVIL (< 768px) ── */
+@media (max-width: 767px) {
+
+  /* Mostrar botón cerrar en móvil */
+  .btn-cerrar-sidebar { display: block !important; }
+
+  /* Columnas del login ocupan todo */
+  .login-card {
+    margin: 16px;
+    padding: 32px 24px;
+  }
+
+  /* Cards en grid 2 columnas en móvil */
+  .row.stat-row { margin: 0 -8px; }
+  .stat-col { padding: 0 8px; }
+
+  /* Tabla con scroll horizontal */
+  .table-card .table-responsive { overflow-x: auto; }
+
+  /* Reducir padding del main */
+  main { padding: 20px 14px; }
+
+  /* Texto más pequeño en tablas */
+  .table tbody td { font-size: 0.8rem; padding: 8px 10px; }
+}
+
+/* ── MÓVIL PEQUEÑO (≤ 360px) ── */
+@media (max-width: 360px) {
+  .sidebar { width: 100%; }
+  main { padding: 16px 12px; }
+  .section-title { font-size: 1.3rem; }
+}
