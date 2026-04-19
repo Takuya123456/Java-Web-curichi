@@ -129,57 +129,61 @@ Cuando un fiado se marca como pagado, se mueve al historial con fecha de pago re
 ### Base de datos
 
 ```sql
--- base de datos para el sistema de curichis
-create database  curichazo_db;
-
+-- crear base de datos
+create database curichazo_db;
 use curichazo_db;
 
 -- tabla de clientes
 create table cliente (
-    id_cliente int auto_increment primary key,
+  cliente_id int auto_increment primary key,
     nombre varchar(100) not null,
     apellido varchar(100) not null,
-    telefono varchar(15)
+    telefono varchar(15),
+    activo boolean default true
 );
 
 -- tabla de ventas
 create table venta (
-    id_venta int auto_increment primary key,
+    venta_id int auto_increment primary key,
     cantidad int not null,
     producto varchar(100) not null,
     nombre_completo varchar(200) not null,
     precio decimal(10,2) not null,
-    id_cliente int not null,
-    foreign key (id_cliente) references cliente(id_cliente)
+    cliente_id int,
+    foreign key (cliente_id) references cliente(cliente_id)
+    on delete set null
 );
 
 -- stock de productos
 create table stock (
-    id_producto int auto_increment primary key,
+    stock_id int auto_increment primary key,
     cantidad int not null,
     producto varchar(100) not null,
     estado enum('Disponible', 'Bajo stock', 'Agotado') default 'Disponible',
     precio decimal(10,2) not null,
-    id_venta int,
-    foreign key (id_venta) references venta(id_venta)
+    venta_id int,
+    foreign key (venta_id) references venta(venta_id)
+    on delete set null
 );
 
 -- fiados pendientes
 create table fiado (
-    id_fiado int auto_increment primary key,
-    id_cliente int not null,
+    fiado_id int auto_increment primary key,
+    cliente_id int,
     fecha date not null,
     estado enum('Pendiente', 'Pagado') default 'Pendiente',
-    foreign key (id_cliente) references cliente(id_cliente)
+    foreign key (cliente_id) references cliente(cliente_id)
+    on delete set null
 );
 
 -- historial de fiados pagados
 create table historial (
-    id_historial int auto_increment primary key,
-    id_fiado int not null,
+    historial_id int auto_increment primary key,
+    fiado_id int,
     fecha date not null,
     precio decimal(10,2) not null,
-    foreign key (id_fiado) references fiado(id_fiado)
+    foreign key (fiado_id) references fiado(fiado_id)
+    on delete set null
 );
 
 -- datos de prueba
@@ -191,29 +195,29 @@ insert into cliente (nombre, apellido, telefono) values
 ('Rosa', 'Flores', '945678901'),
 ('Miguel', 'Soto', '956789012');
 
-insert into venta (cantidad, producto, nombre_completo, precio, id_cliente) values
+insert into venta (cantidad, producto, comprador, precio_total, cliente_id) values
 (20, 'Mango', 'Ana Torres', 10.00, 1),
 (15, 'Fresa', 'Carlos Quispe', 7.50, 2),
 (18, 'Coco con leche', 'Lucía Mamani', 10.80, 3),
 (12, 'Aguaje', 'Pedro Huanca', 9.60, 4),
 (8, 'Gelatina', 'Rosa Flores', 3.20, 5);
 
-insert into stock (cantidad, producto, estado, precio, id_venta) values
+insert into stock (cantidad, producto, estado, precio, venta_id) values
 (80, 'Mango', 'Disponible', 0.50, 1),
 (60, 'Coco con leche', 'Disponible', 0.60, 3),
 (45, 'Fresa', 'Disponible', 0.50, 2),
 (30, 'Aguaje', 'Disponible', 0.80, 4),
 (10, 'Gelatina', 'Bajo stock', 0.40, 5);
 
-insert into fiado (id_cliente, fecha, estado) values
-(1, '2026-04-10', 'Pendiente'),
-(2, '2026-04-09', 'Pendiente'),
-(3, '2026-04-08', 'Pendiente'),
-(4, '2026-04-07', 'Pendiente'),
-(5, '2026-04-07', 'Pendiente'),
-(6, '2026-04-06', 'Pendiente');
+insert into fiado (cliente_id,nombre,deuda, fecha, estado) values
+(1, 'Carlos Quispe',12,'2026-04-10', 'Pendiente'),
+(2,'Ana Perez',13, '2026-04-09', 'Pendiente'),
+(3,'Carlos MAnuyama',15, '2026-04-08', 'Pendiente'),
+(4,'Greta¨Paredes',14, '2026-04-07', 'Pendiente'),
+(5,'Walter Melendez',13, '2026-04-07', 'Pendiente'),
+(6,'Mathias Chira',16, '2026-04-06', 'Pendiente');
 
-insert into historial (id_fiado, fecha, precio) values
+insert into historial (fiado_id, fecha, precio) values
 (1, '2026-04-12', 5.00),
 (2, '2026-04-11', 3.50);
 ```
