@@ -69,6 +69,7 @@ Solución tecnológica: Desarrollar un sistema web con Java Spring Boot y MySQL 
 curichazo/
 ├── frontend/               → HTML, CSS, JS
 │   ├── css/
+│   ├──  └── responsive.css
 │   │   └── style.css
 │   ├── js/
 │   │   ├── main.js
