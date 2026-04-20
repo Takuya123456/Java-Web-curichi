@@ -167,23 +167,25 @@ create table stock (
 );
 
 -- fiados pendientes
-create table fiado (
-    fiado_id int auto_increment primary key,
-    cliente_id int,
-    fecha date not null,
-    estado enum('Pendiente', 'Pagado') default 'Pendiente',
-    foreign key (cliente_id) references cliente(cliente_id)
-    on delete set null
+CREATE TABLE fiado (
+    fiado_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    deuda DECIMAL(10,2) NOT NULL,
+    fecha VARCHAR(20) NOT NULL,
+    estado VARCHAR(50) NOT NULL DEFAULT 'Pendiente'
 );
 
 -- historial de fiados pagados
-create table historial (
-    historial_id int auto_increment primary key,
-    fiado_id int,
-    fecha date not null,
-    precio decimal(10,2) not null,
-    foreign key (fiado_id) references fiado(fiado_id)
-    on delete set null
+
+CREATE TABLE historial (
+    historial_id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(500) NOT NULL,
+    fecha VARCHAR(20) NOT NULL,
+    nombre VARCHAR(100),
+    deuda DECIMAL(10,2),
+    fecha_fiado VARCHAR(20),
+    fecha_pago VARCHAR(20)
 );
 
 -- datos de prueba
@@ -220,6 +222,7 @@ insert into fiado (cliente_id,nombre,deuda, fecha, estado) values
 insert into historial (fiado_id, fecha, precio) values
 (1, '2026-04-12', 5.00),
 (2, '2026-04-11', 3.50);
+
 ```
 
 ---
