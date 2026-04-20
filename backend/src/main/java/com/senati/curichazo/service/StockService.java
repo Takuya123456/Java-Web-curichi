@@ -11,9 +11,8 @@ public class StockService {
     private final StockRepository stockRepository;
     private final HistorialService historialService;
 
-    public StockService(StockRepository stockRepository,
-                        HistorialService historialService) {
-        this.stockRepository  = stockRepository;
+    public StockService(StockRepository stockRepository, HistorialService historialService) {
+        this.stockRepository = stockRepository;
         this.historialService = historialService;
     }
 
@@ -22,6 +21,7 @@ public class StockService {
     }
 
     public Stock guardar(Stock stock) {
+        actualizarEstadoStock(stock);
         return stockRepository.save(stock);
     }
 
@@ -29,17 +29,21 @@ public class StockService {
         return stockRepository.findById(id).orElse(null);
     }
 
-    // Elimina el producto y deja registro en historial
     public void eliminar(Long id) {
-        Stock stock = stockRepository.findById(id).orElse(null);
-        if (stock != null) {
-            historialService.registrar(
-                "ELIMINACION_STOCK",
-                "Producto eliminado — " + stock.getProducto()
-                + " | Cantidad: " + stock.getCantidad()
-                + " | Precio: S/ " + stock.getPrecio()
-            );
-            stockRepository.delete(stock);
+        Stock s = stockRepository.findById(id).orElse(null);
+        if (s != null) {
+            historialService.registrar("ELIMINACION_STOCK", "Producto eliminado — " + s.getProducto());
+            stockRepository.delete(s);
+        }
+    }
+
+    private void actualizarEstadoStock(Stock stock) {
+        if (stock.getCantidad() <= 0) {
+            stock.setEstado("Agotado");
+        } else if (stock.getCantidad() <= 5) {
+            stock.setEstado("Bajo stock");
+        } else {
+            stock.setEstado("Disponible");
         }
     }
 }

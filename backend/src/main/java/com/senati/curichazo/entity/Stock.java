@@ -20,7 +20,6 @@ public class Stock {
     @Column(nullable = false)
     private Double precio;
 
-    // "Disponible", "Bajo stock", "Agotado"
     @Column(nullable = false)
     private String estado;
 

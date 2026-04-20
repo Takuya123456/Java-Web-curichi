@@ -3,6 +3,7 @@ package com.senati.curichazo.service;
 import com.senati.curichazo.entity.Venta;
 import com.senati.curichazo.repository.VentaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -20,8 +21,12 @@ public class VentaService {
         return ventaRepository.findAll();
     }
 
+    @Transactional
     public Venta guardar(Venta venta) {
-        venta.calcularTotal();        // ← TOTAL SE CALCULA AUTOMÁTICAMENTE
+        // Calcular el total
+        if (venta.getCantidad() != null && venta.getPrecio() != null) {
+            venta.setPrecioTotal(venta.getCantidad() * venta.getPrecio());
+        }
         return ventaRepository.save(venta);
     }
 
@@ -29,16 +34,15 @@ public class VentaService {
         return ventaRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void eliminar(Long id) {
-        Venta venta = ventaRepository.findById(id).orElse(null);
-        if (venta != null) {
+        Venta v = ventaRepository.findById(id).orElse(null);
+        if (v != null) {
             historialService.registrar(
                     "ELIMINACION_VENTA",
-                    "Venta eliminada — " + venta.getNombre() + " " + venta.getApellido() +
-                            " | Producto: " + venta.getProducto() +
-                            " | Total: S/ " + venta.getTotal()
+                    "Venta eliminada — " + v.getNombre() + " " + v.getApellido()
             );
-            ventaRepository.delete(venta);
+            ventaRepository.delete(v);
         }
     }
 }

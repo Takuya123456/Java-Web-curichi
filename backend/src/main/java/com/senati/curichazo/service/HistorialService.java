@@ -16,12 +16,11 @@ public class HistorialService {
         this.historialRepository = historialRepository;
     }
 
-    // Retorna todos los registros del historial
     public List<Historial> listarTodos() {
         return historialRepository.findAll();
     }
 
-    // Registra cualquier eliminacion en el historial
+    // Registra cualquier eliminacion
     public void registrar(String tipo, String descripcion) {
         Historial h = new Historial();
         h.setTipo(tipo);
@@ -30,15 +29,13 @@ public class HistorialService {
         historialRepository.save(h);
     }
 
-    // Registra un pago de fiado con todos los detalles
-    public Historial registrarPago(String clienteNombre, Double deuda,
-                                    String fechaFiado) {
+    // Registra un pago de fiado con detalle completo
+    public Historial registrarPago(String nombre, Double deuda, String fechaFiado) {
         Historial h = new Historial();
         h.setTipo("PAGO_FIADO");
-        h.setDescripcion("Fiado pagado — Cliente: " + clienteNombre
-                + " | Deuda: S/ " + deuda);
+        h.setDescripcion("Fiado pagado — " + nombre + " | S/ " + deuda);
         h.setFecha(hoy());
-        h.setCliente(clienteNombre);
+        h.setNombre(nombre);
         h.setDeuda(deuda);
         h.setFechaFiado(fechaFiado);
         h.setFechaPago(hoy());

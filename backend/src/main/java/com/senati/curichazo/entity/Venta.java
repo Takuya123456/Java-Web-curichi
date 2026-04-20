@@ -1,7 +1,7 @@
 package com.senati.curichazo.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonAlias;  // ← IMPORTAR ESTO
 
 @Entity
 @Table(name = "venta")
@@ -27,51 +27,34 @@ public class Venta {
     @Column(nullable = false)
     private Double precio;
 
-    @Column(nullable = false)
-    private Double total;
+    @Column(name = "precio_total", nullable = false)
+    @JsonAlias({"total", "precioTotal"})  // ← SOLO AGREGAR ESTA LÍNEA
+    private Double precioTotal;
 
     @Column(nullable = false)
     private String fecha;
 
-    // ==================== CAMPO PARA EL FRONTEND ====================
-    @JsonProperty("comprador")   // ←←← Esto fuerza el nombre en el JSON
-    public String getComprador() {
-        return (nombre != null ? nombre.trim() : "")
-                + " "
-                + (apellido != null ? apellido.trim() : "");
-    }
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = true)
+    private Cliente cliente;
 
-    // ==================== CÁLCULO AUTOMÁTICO DEL TOTAL ====================
-    public void calcularTotal() {
-        if (this.cantidad != null && this.precio != null) {
-            this.total = this.cantidad * this.precio;
-        } else {
-            this.total = 0.0;
-        }
-    }
-
-    // Getters y Setters (sin cambios)
+    // Getters y Setters (igual que antes)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
-
     public String getApellido() { return apellido; }
     public void setApellido(String apellido) { this.apellido = apellido; }
-
     public String getProducto() { return producto; }
     public void setProducto(String producto) { this.producto = producto; }
-
     public Integer getCantidad() { return cantidad; }
     public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
-
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
-
-    public Double getTotal() { return total; }
-    public void setTotal(Double total) { this.total = total; }
-
+    public Double getPrecioTotal() { return precioTotal; }
+    public void setPrecioTotal(Double precioTotal) { this.precioTotal = precioTotal; }
     public String getFecha() { return fecha; }
     public void setFecha(String fecha) { this.fecha = fecha; }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 }

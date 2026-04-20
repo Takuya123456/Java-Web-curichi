@@ -16,7 +16,7 @@ public class HistorialController {
         this.historialService = historialService;
     }
 
-    // GET /api/historial
+    // GET /api/historial → todos los registros
     @GetMapping
     public List<Historial> listar() {
         return historialService.listarTodos();

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class curichazoApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(curichazoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(com.senati.curichazo.curichazoApplication.class, args);
+    }
 }

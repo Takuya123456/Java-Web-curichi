@@ -11,23 +11,25 @@ public class Fiado {
     @Column(name = "fiado_id")
     private Long id;
 
+    // Nombre directo, sin FK
     @Column(nullable = false)
-    private String cliente;
+    private String nombre;
 
+    // Deuda directa
     @Column(nullable = false)
     private Double deuda;
 
     @Column(nullable = false)
     private String fecha;
 
-    // Siempre empieza en "Pendiente"
+    // "Pendiente" o "Pagado"
     @Column(nullable = false)
     private String estado;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public String getCliente() { return cliente; }
-    public void setCliente(String cliente) { this.cliente = cliente; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
     public Double getDeuda() { return deuda; }
     public void setDeuda(Double deuda) { this.deuda = deuda; }
     public String getFecha() { return fecha; }

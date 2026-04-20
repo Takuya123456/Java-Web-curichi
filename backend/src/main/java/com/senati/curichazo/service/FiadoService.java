@@ -4,6 +4,7 @@ import com.senati.curichazo.entity.Fiado;
 import com.senati.curichazo.entity.Historial;
 import com.senati.curichazo.repository.FiadoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -22,9 +23,11 @@ public class FiadoService {
         return fiadoRepository.findAll();
     }
 
-    // Guarda el fiado siempre con estado "Pendiente"
     public Fiado guardar(Fiado fiado) {
         fiado.setEstado("Pendiente");
+        System.out.println("=== GUARDANDO FIADO ===");
+        System.out.println("Cliente: " + fiado.getNombre());
+        System.out.println("Deuda: " + fiado.getDeuda());
         return fiadoRepository.save(fiado);
     }
 
@@ -32,34 +35,59 @@ public class FiadoService {
         return fiadoRepository.findById(id).orElse(null);
     }
 
-    // Elimina el fiado y deja registro en historial
+    @Transactional
     public void eliminar(Long id) {
-        Fiado fiado = fiadoRepository.findById(id).orElse(null);
-        if (fiado != null) {
+        try {
+            System.out.println("=== ELIMINANDO FIADO ID: " + id + " ===");
+            Fiado f = fiadoRepository.findById(id).orElse(null);
+            if (f == null) {
+                System.out.println("❌ Fiado no encontrado");
+                throw new RuntimeException("Fiado no encontrado con ID: " + id);
+            }
+
+            System.out.println("Fiado encontrado: " + f.getNombre() + " - Deuda: " + f.getDeuda());
+
             historialService.registrar(
-                "ELIMINACION_FIADO",
-                "Fiado eliminado — Cliente: " + fiado.getCliente()
-                + " | Deuda: S/ " + fiado.getDeuda()
+                    "ELIMINACION_FIADO",
+                    "Fiado eliminado — " + f.getNombre()
+                            + " | Deuda: S/ " + f.getDeuda()
             );
-            fiadoRepository.delete(fiado);
+
+            fiadoRepository.delete(f);
+            System.out.println("✅ Fiado eliminado correctamente");
+
+        } catch (Exception e) {
+            System.err.println("❌ Error al eliminar fiado: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error al eliminar fiado: " + e.getMessage());
         }
     }
 
-    // Marca como pagado: guarda en historial y elimina de fiados
+    // Marca como pagado → guarda en historial → elimina de fiados
+    @Transactional
     public Historial marcarPagado(Long id) {
-        Fiado fiado = fiadoRepository.findById(id).orElse(null);
-        if (fiado == null) return null;
+        try {
+            System.out.println("=== MARCANDO FIADO COMO PAGADO ID: " + id + " ===");
+            Fiado f = fiadoRepository.findById(id).orElse(null);
+            if (f == null) {
+                System.out.println("❌ Fiado no encontrado");
+                return null;
+            }
 
-        // 1. Registrar pago en historial
-        Historial historial = historialService.registrarPago(
-            fiado.getCliente(),
-            fiado.getDeuda(),
-            fiado.getFecha()
-        );
+            System.out.println("Procesando pago de: " + f.getNombre() + " - S/ " + f.getDeuda());
 
-        // 2. Eliminar de fiados pendientes
-        fiadoRepository.delete(fiado);
+            Historial h = historialService.registrarPago(
+                    f.getNombre(), f.getDeuda(), f.getFecha()
+            );
 
-        return historial;
+            fiadoRepository.delete(f);
+            System.out.println("✅ Pago registrado y fiado eliminado");
+            return h;
+
+        } catch (Exception e) {
+            System.err.println("❌ Error al marcar pagado: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error al marcar pagado: " + e.getMessage());
+        }
     }
 }

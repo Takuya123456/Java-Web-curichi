@@ -17,32 +17,26 @@ public class StockController {
         this.stockService = stockService;
     }
 
-    // GET /api/stock
     @GetMapping
-    public List<Stock> listar() {
-        return stockService.listarTodos();
-    }
+    public List<Stock> listar() { return stockService.listarTodos(); }
 
-    // POST /api/stock
     @PostMapping
     public Stock crear(@RequestBody Stock stock) {
         return stockService.guardar(stock);
     }
 
-    // PUT /api/stock/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Stock> editar(@PathVariable Long id,
                                          @RequestBody Stock datos) {
-        Stock existente = stockService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
-        existente.setProducto(datos.getProducto());
-        existente.setCantidad(datos.getCantidad());
-        existente.setPrecio(datos.getPrecio());
-        existente.setEstado(datos.getEstado());
-        return ResponseEntity.ok(stockService.guardar(existente));
+        Stock s = stockService.buscarPorId(id);
+        if (s == null) return ResponseEntity.notFound().build();
+        s.setProducto(datos.getProducto());
+        s.setCantidad(datos.getCantidad());
+        s.setPrecio(datos.getPrecio());
+        s.setEstado(datos.getEstado());
+        return ResponseEntity.ok(stockService.guardar(s));
     }
 
-    // DELETE /api/stock/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         stockService.eliminar(id);

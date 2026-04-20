@@ -17,31 +17,25 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    // GET /api/clientes
     @GetMapping
-    public List<Cliente> listar() {
-        return clienteService.listarTodos();
-    }
+    public List<Cliente> listar() { return clienteService.listarTodos(); }
 
-    // POST /api/clientes
     @PostMapping
     public Cliente crear(@RequestBody Cliente cliente) {
         return clienteService.guardar(cliente);
     }
 
-    // PUT /api/clientes/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> editar(@PathVariable Long id,
                                            @RequestBody Cliente datos) {
-        Cliente existente = clienteService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
-        existente.setNombre(datos.getNombre());
-        existente.setApellido(datos.getApellido());
-        existente.setTelefono(datos.getTelefono());
-        return ResponseEntity.ok(clienteService.guardar(existente));
+        Cliente c = clienteService.buscarPorId(id);
+        if (c == null) return ResponseEntity.notFound().build();
+        c.setNombre(datos.getNombre());
+        c.setApellido(datos.getApellido());
+        c.setTelefono(datos.getTelefono());
+        return ResponseEntity.ok(clienteService.guardar(c));
     }
 
-    // DELETE /api/clientes/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         clienteService.eliminar(id);

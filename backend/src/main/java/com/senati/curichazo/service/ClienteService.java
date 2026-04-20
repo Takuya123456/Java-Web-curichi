@@ -9,7 +9,7 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
-    private final com.senati.curichazo.service.HistorialService historialService;
+    private final HistorialService historialService;
 
     public ClienteService(ClienteRepository clienteRepository,
                           HistorialService historialService) {
@@ -17,29 +17,21 @@ public class ClienteService {
         this.historialService  = historialService;
     }
 
-    public List<Cliente> listarTodos() {
-        return clienteRepository.findAll();
-    }
+    public List<Cliente> listarTodos() { return clienteRepository.findAll(); }
 
-    public Cliente guardar(Cliente cliente) {
-        return clienteRepository.save(cliente);
-    }
+    public Cliente guardar(Cliente cliente) { return clienteRepository.save(cliente); }
 
-    public Cliente buscarPorId(Long id) {
-        return clienteRepository.findById(id).orElse(null);
-    }
+    public Cliente buscarPorId(Long id) { return clienteRepository.findById(id).orElse(null); }
 
-    // Elimina el cliente y deja registro en historial
     public void eliminar(Long id) {
-        Cliente cliente = clienteRepository.findById(id).orElse(null);
-        if (cliente != null) {
+        Cliente c = clienteRepository.findById(id).orElse(null);
+        if (c != null) {
             historialService.registrar(
                 "ELIMINACION_CLIENTE",
-                "Cliente eliminado — " + cliente.getNombre()
-                + " " + cliente.getApellido()
-                + " | Tel: " + cliente.getTelefono()
+                "Cliente eliminado — " + c.getNombre() + " " + c.getApellido()
+                + " | Tel: " + c.getTelefono()
             );
-            clienteRepository.delete(cliente);
+            clienteRepository.delete(c);
         }
     }
 }

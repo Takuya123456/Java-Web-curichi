@@ -17,35 +17,32 @@ public class VentaController {
         this.ventaService = ventaService;
     }
 
-    // GET /api/ventas
     @GetMapping
     public List<Venta> listar() {
         return ventaService.listarTodos();
     }
 
-    // POST /api/ventas
     @PostMapping
     public Venta crear(@RequestBody Venta venta) {
         return ventaService.guardar(venta);
     }
 
-    // PUT /api/ventas/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<Venta> editar(@PathVariable Long id,
-                                         @RequestBody Venta datos) {
-        Venta existente = ventaService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
-        existente.setNombre(datos.getNombre());
-        existente.setApellido(datos.getApellido());
-        existente.setProducto(datos.getProducto());
-        existente.setCantidad(datos.getCantidad());
-        existente.setPrecio(datos.getPrecio());
-        existente.setTotal(datos.getTotal());
-        existente.setFecha(datos.getFecha());
-        return ResponseEntity.ok(ventaService.guardar(existente));
+    public ResponseEntity<Venta> editar(@PathVariable Long id, @RequestBody Venta datos) {
+        Venta v = ventaService.buscarPorId(id);
+        if (v == null) {
+            return ResponseEntity.notFound().build();
+        }
+        v.setNombre(datos.getNombre());
+        v.setApellido(datos.getApellido());
+        v.setProducto(datos.getProducto());
+        v.setCantidad(datos.getCantidad());
+        v.setPrecio(datos.getPrecio());
+        v.setPrecioTotal(datos.getCantidad() * datos.getPrecio());
+        v.setFecha(datos.getFecha());
+        return ResponseEntity.ok(ventaService.guardar(v));
     }
 
-    // DELETE /api/ventas/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         ventaService.eliminar(id);
