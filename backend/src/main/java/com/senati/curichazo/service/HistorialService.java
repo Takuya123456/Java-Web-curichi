@@ -20,7 +20,6 @@ public class HistorialService {
         return historialRepository.findAll();
     }
 
-    // Registra cualquier eliminacion
     public void registrar(String tipo, String descripcion) {
         Historial h = new Historial();
         h.setTipo(tipo);
@@ -29,7 +28,6 @@ public class HistorialService {
         historialRepository.save(h);
     }
 
-    // Registra un pago de fiado con detalle completo
     public Historial registrarPago(String nombre, Double deuda, String fechaFiado) {
         Historial h = new Historial();
         h.setTipo("PAGO_FIADO");

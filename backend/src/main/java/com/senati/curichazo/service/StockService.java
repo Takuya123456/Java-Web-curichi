@@ -21,7 +21,8 @@ public class StockService {
     }
 
     public Stock guardar(Stock stock) {
-        actualizarEstadoStock(stock);
+        // Ya no se fuerza el estado automáticamente
+        // Se respeta el estado que viene del frontend
         return stockRepository.save(stock);
     }
 
@@ -34,16 +35,6 @@ public class StockService {
         if (s != null) {
             historialService.registrar("ELIMINACION_STOCK", "Producto eliminado — " + s.getProducto());
             stockRepository.delete(s);
-        }
-    }
-
-    private void actualizarEstadoStock(Stock stock) {
-        if (stock.getCantidad() <= 0) {
-            stock.setEstado("Agotado");
-        } else if (stock.getCantidad() <= 5) {
-            stock.setEstado("Bajo stock");
-        } else {
-            stock.setEstado("Disponible");
         }
     }
 }

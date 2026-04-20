@@ -18,7 +18,9 @@ public class StockController {
     }
 
     @GetMapping
-    public List<Stock> listar() { return stockService.listarTodos(); }
+    public List<Stock> listar() {
+        return stockService.listarTodos();
+    }
 
     @PostMapping
     public Stock crear(@RequestBody Stock stock) {
@@ -26,14 +28,15 @@ public class StockController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Stock> editar(@PathVariable Long id,
-                                         @RequestBody Stock datos) {
+    public ResponseEntity<Stock> editar(@PathVariable Long id, @RequestBody Stock datos) {
         Stock s = stockService.buscarPorId(id);
-        if (s == null) return ResponseEntity.notFound().build();
+        if (s == null) {
+            return ResponseEntity.notFound().build();
+        }
         s.setProducto(datos.getProducto());
         s.setCantidad(datos.getCantidad());
         s.setPrecio(datos.getPrecio());
-        s.setEstado(datos.getEstado());
+        s.setEstado(datos.getEstado());  // ✅ Se respeta el estado enviado
         return ResponseEntity.ok(stockService.guardar(s));
     }
 

@@ -11,18 +11,15 @@ public class Fiado {
     @Column(name = "fiado_id")
     private Long id;
 
-    // Nombre directo, sin FK
     @Column(nullable = false)
     private String nombre;
 
-    // Deuda directa
     @Column(nullable = false)
     private Double deuda;
 
     @Column(nullable = false)
     private String fecha;
 
-    // "Pendiente" o "Pagado"
     @Column(nullable = false)
     private String estado;
 
