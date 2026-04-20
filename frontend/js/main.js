@@ -74,7 +74,7 @@ async function cargarClientes() {
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
-           </td>
+          </td>
         </tr>`;
     });
   } catch (error) {
@@ -130,6 +130,7 @@ async function guardarCliente() {
     
     bootstrap.Modal.getInstance(document.getElementById('modalCliente')).hide();
     await cargarClientes();
+    alert('✅ Cliente guardado correctamente');
   } catch (error) {
     console.error('Error guardando cliente:', error);
     err.textContent = 'Error al guardar. Verifica la conexión.';
@@ -159,11 +160,14 @@ async function cargarStock() {
     }
     
     data.forEach(s => {
-      const badge = s.estado === 'Disponible'
-        ? `<span class="badge-disponible">${s.estado}</span>`
-        : s.estado === 'Bajo stock'
-        ? `<span class="badge-bajstock">${s.estado}</span>`
-        : `<span class="badge-agotado">${s.estado}</span>`;
+      let badge = '';
+      if (s.estado === 'Disponible') {
+        badge = `<span class="badge-disponible">${s.estado}</span>`;
+      } else if (s.estado === 'Bajo stock') {
+        badge = `<span class="badge-bajstock">${s.estado}</span>`;
+      } else {
+        badge = `<span class="badge-agotado">${s.estado}</span>`;
+      }
       
       tbody.innerHTML += `
         <tr>
@@ -175,7 +179,7 @@ async function cargarStock() {
           <td>
             <div class="d-flex gap-2">
               <button class="btn btn-sm btn-outline-primary fw-bold"
-                onclick="editarStock(${JSON.stringify(s).replace(/"/g, '&quot;')})">
+                onclick='editarStock(${JSON.stringify(s)})'>
                 <i class="fa-solid fa-pen"></i>
               </button>
               <button class="btn btn-sm btn-outline-danger fw-bold"
@@ -183,14 +187,14 @@ async function cargarStock() {
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
-           </td>
+          </td>
         </tr>`;
     });
     renderStockInicio(data);
   } catch (error) {
     console.error('Error cargando stock:', error);
     document.getElementById('table-stock').innerHTML = 
-      `<td><td colspan="6" class="text-center text-danger">Error al conectar con el servidor</td></tr>`;
+      `<tr><td colspan="6" class="text-center text-danger">Error al conectar con el servidor</td></tr>`;
   }
 }
 
@@ -224,8 +228,10 @@ function renderStockInicio(data) {
 
 function abrirModalStock() {
   document.getElementById('modalStockTitulo').textContent = 'Nuevo Producto';
-  ['stock-id', 'stock-producto', 'stock-cantidad', 'stock-precio']
-    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('stock-id').value = '';
+  document.getElementById('stock-producto').value = '';
+  document.getElementById('stock-cantidad').value = '';
+  document.getElementById('stock-precio').value = '';
   document.getElementById('stock-estado').value = 'Disponible';
   document.getElementById('stock-error').style.display = 'none';
   new bootstrap.Modal(document.getElementById('modalStock')).show();
@@ -278,6 +284,7 @@ async function guardarStock() {
     
     bootstrap.Modal.getInstance(document.getElementById('modalStock')).hide();
     await cargarStock();
+    alert('✅ Producto guardado correctamente');
   } catch (error) {
     console.error('Error guardando stock:', error);
     err.textContent = 'Error al guardar. Verifica la conexión.';
@@ -286,7 +293,7 @@ async function guardarStock() {
 }
 
 // ════════════════════════════════════════
-//  VENTAS (CORREGIDO)
+//  VENTAS
 // ════════════════════════════════════════
 async function cargarVentas() {
   try {
@@ -328,7 +335,7 @@ async function cargarVentas() {
                 <i class="fa-solid fa-trash me-1"></i>Eliminar
               </button>
             </div>
-           </td>
+          </td>
         </tr>`;
     });
   } catch (error) {
@@ -489,6 +496,7 @@ async function guardarVenta() {
     bootstrap.Modal.getInstance(document.getElementById('modalVenta')).hide();
     await cargarVentas();
     await cargarStock();
+    alert('✅ Venta guardada correctamente');
     
   } catch (error) {
     console.error('Error guardando venta:', error);
@@ -533,7 +541,7 @@ async function cargarFiados() {
                 <i class="fa-solid fa-trash me-1"></i>Eliminar
               </button>
             </div>
-           </td>
+          </td>
         </tr>`;
     });
   } catch (error) {
@@ -545,7 +553,9 @@ async function cargarFiados() {
 
 function abrirModalFiado() {
   document.getElementById('modalFiadoTitulo').textContent = 'Nuevo Fiado';
-  ['fiado-id', 'fiado-nombre', 'fiado-deuda'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fiado-id').value = '';
+  document.getElementById('fiado-nombre').value = '';
+  document.getElementById('fiado-deuda').value = '';
   document.getElementById('fiado-fecha').value = new Date().toISOString().split('T')[0];
   document.getElementById('fiado-error').style.display = 'none';
   new bootstrap.Modal(document.getElementById('modalFiado')).show();
@@ -584,17 +594,26 @@ async function guardarFiado() {
     const response = await fetch(`${API}/fiados`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, deuda, fecha, estado: 'Pendiente' })
+      body: JSON.stringify({ 
+        nombre: nombre,
+        deuda: deuda, 
+        fecha: fecha, 
+        estado: 'Pendiente' 
+      })
     });
     
-    if (!response.ok) throw new Error(`Error ${response.status}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `Error ${response.status}`);
+    }
     
     bootstrap.Modal.getInstance(document.getElementById('modalFiado')).hide();
     await cargarFiados();
+    alert('✅ Fiado registrado correctamente');
     
   } catch (error) {
     console.error('Error guardando fiado:', error);
-    err.textContent = 'Error al guardar. Verifica la conexión.';
+    err.textContent = `Error al guardar: ${error.message}`;
     err.style.display = 'block';
   }
 }
@@ -612,12 +631,13 @@ async function marcarPagado(id, nombre, deuda) {
       await cargarHistorial();
     }
     
+    alert('✅ Pago registrado correctamente');
+    
   } catch (error) {
     console.error('Error registrando pago:', error);
     alert('Error al registrar el pago. Verifica la conexión.');
   }
 }
-
 // ════════════════════════════════════════
 //  HISTORIAL DE PAGOS
 // ════════════════════════════════════════
@@ -724,6 +744,8 @@ function confirmarEliminar(tipo, id, descripcion) {
         await cargarStock();
       }
       if (tipo === 'fiado') await cargarFiados();
+      
+      alert('✅ Registro eliminado correctamente');
       
     } catch (error) {
       console.error('Error al eliminar:', error);
