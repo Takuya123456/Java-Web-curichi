@@ -252,6 +252,8 @@ insert into historial (fiado_id, fecha, precio) values
 ```properties
 spring.application.name=gotagota
 
+spring.application.name=curichazo_db
+
 # CONEXION A MYSQL
 spring.datasource.url=jdbc:mysql://localhost:3306/curichazo_db
 spring.datasource.username=root
@@ -259,12 +261,14 @@ spring.datasource.password=
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 # JPA / HIBERNATE
+# update = crea tablas automaticamente si no existen
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 
 # Puerto del servidor
 server.port=8080
+
 ```
 
 ---
